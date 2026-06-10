@@ -1,6 +1,8 @@
 services:
   - type: web
     name: aladdin
+    repo: https://github.com/sohi5444/Aladin
+    branch: main
     runtime: python
     pythonVersion: "3.12"
     plan: free
