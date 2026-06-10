@@ -1,15 +1,13 @@
 import random
 from data.models import RiskSnapshot
-from data.database import get_session
 
 class RiskEngine:
     async def take_snapshot(self):
-        snapshot = RiskSnapshot(var_95=round(random.uniform(0.5, 2.0), 2))
-        async with get_session() as session:
-            session.add(snapshot)
-            await session.commit()
-        return snapshot
+        var_95 = round(random.uniform(0.5, 3.5), 2)
+        RiskSnapshot.create(var_95=var_95)
+        return var_95
 
     async def stress_test(self, scenario: str):
-        return {"scenario": scenario, "loss_pct": random.uniform(5, 20)}
+        return {"scenario": scenario, "loss_pct": round(random.uniform(5, 20), 1)}
+
 risk_engine = RiskEngine()

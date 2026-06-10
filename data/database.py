@@ -1,15 +1,13 @@
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-from sqlalchemy.orm import sessionmaker
-from config.settings import settings
-from .models import Base
-
-engine = create_async_engine(settings.DATABASE_URL)
-AsyncSessionLocal = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
-
 async def init_db():
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+    """Initialize JSON storage directories"""
+    import os
+    os.makedirs("data_storage", exist_ok=True)
+    print("JSON storage ready")
 
 async def get_session():
-    async with AsyncSessionLocal() as session:
-        yield session
+    class DummySession:
+        async def __aenter__(self):
+            return None
+        async def __aexit__(self, *args):
+            pass
+    yield DummySession()
