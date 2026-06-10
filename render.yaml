@@ -2,7 +2,7 @@ services:
   - type: web
     name: aladdin
     runtime: python
-    repo: https://github.com/sohi5444/Aladin
+    pythonVersion: "3.12"
     plan: free
     buildCommand: pip install -r requirements.txt
     startCommand: python main.py
