@@ -1,0 +1,9 @@
+version: '3.8'
+services:
+  aladdin:
+    build: .
+    env_file:
+      - .env
+    volumes:
+      - ./data_db:/app/data_db
+    restart: always
