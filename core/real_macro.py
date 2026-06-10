@@ -1,30 +1,29 @@
-import fred
 import os
+from fredapi import Fred
 
 FRED_KEY = os.environ.get("FRED_API_KEY")
-if FRED_KEY:
-    fred.key(FRED_KEY)
+fred = Fred(api_key=FRED_KEY) if FRED_KEY else None
 
 class RealMacroBrain:
     @staticmethod
     def get_gdp():
-        if not FRED_KEY:
+        if not fred:
             return None
         try:
-            data = fred.observations('A191RL1Q225SBEA', limit=1, sort='desc')
-            return round(float(data[0]['value']), 2) if data else None
+            series = fred.get_series('A191RL1Q225SBEA')
+            return round(float(series.iloc[-1]), 2) if not series.empty else None
         except:
             return None
 
     @staticmethod
     def get_cpi_yoy():
-        if not FRED_KEY:
+        if not fred:
             return None
         try:
-            cpi = fred.observations('CPIAUCSL', limit=13, sort='desc')
+            cpi = fred.get_series('CPIAUCSL')
             if len(cpi) >= 13:
-                latest = float(cpi[0]['value'])
-                year_ago = float(cpi[12]['value'])
+                latest = cpi.iloc[-1]
+                year_ago = cpi.iloc[-13]
                 return round((latest - year_ago) / year_ago * 100, 2)
         except:
             pass
@@ -32,21 +31,21 @@ class RealMacroBrain:
 
     @staticmethod
     def get_unemployment():
-        if not FRED_KEY:
+        if not fred:
             return None
         try:
-            data = fred.observations('UNRATE', limit=1, sort='desc')
-            return round(float(data[0]['value']), 1) if data else None
+            unemp = fred.get_series('UNRATE')
+            return round(float(unemp.iloc[-1]), 1) if not unemp.empty else None
         except:
             return None
 
     @staticmethod
     def get_fed_rate():
-        if not FRED_KEY:
+        if not fred:
             return None
         try:
-            data = fred.observations('DFF', limit=1, sort='desc')
-            return round(float(data[0]['value']), 2) if data else None
+            rate = fred.get_series('DFF')
+            return round(float(rate.iloc[-1]), 2) if not rate.empty else None
         except:
             return None
 
