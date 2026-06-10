@@ -2,7 +2,7 @@ import asyncio
 import os
 import threading
 from dotenv import load_dotenv
-from telegram.bot import telegram_bot
+from aladdin_telegram.bot import telegram_bot
 from data.database import init_db
 from utils.helpers import logger
 
