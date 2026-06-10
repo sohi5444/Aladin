@@ -2,10 +2,10 @@ python-telegram-bot==20.7
 starlette==0.37.2
 uvicorn==0.27.1
 python-dotenv==1.0.0
-starlette
-uvicorn
-fred-py==1.1.0
+fredapi==0.5.2
 alpha_vantage==2.3.1
 backtesting==0.4.2
 pandas_ta==0.3.14b0
 yfinance==0.2.33
+pandas==2.1.4
+numpy==1.26.2
