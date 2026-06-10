@@ -5,6 +5,7 @@ from core.risk_engine import risk_engine
 from core.oms import oms
 from core.real_macro import RealMacroBrain
 from core.backtest_engine import run_backtest
+from core.advanced_signals import generate_signal
 import asyncio
 
 class TelegramBot:
@@ -19,10 +20,11 @@ class TelegramBot:
         self.app.add_handler(CommandHandler("trade", self.trade))
         self.app.add_handler(CommandHandler("backtest", self.backtest))
         self.app.add_handler(CommandHandler("briefing", self.briefing))
+        self.app.add_handler(CommandHandler("signal", self.signal))
 
     async def start(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(
-            "🟢 PersonalAladdin active.\nCommands:\n/risk\n/macro\n/trade buy qty TICKER\n/backtest TICKER START END\n/briefing"
+            "🟢 PersonalAladdin active.\nCommands:\n/risk\n/macro\n/trade buy qty TICKER\n/backtest TICKER START END\n/briefing\n/signal TICKER"
         )
 
     async def risk(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -85,6 +87,21 @@ class TelegramBot:
     async def briefing(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         regime = RealMacroBrain.get_regime()
         await update.message.reply_text(f"🧠 *AI Briefing*\nCurrent regime: {regime}\nNo actionable events. Monitor macro data.", parse_mode="Markdown")
+
+    async def signal(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        args = context.args
+        ticker = args[0].upper() if args else 'AAPL'
+        sig = generate_signal(ticker)
+        msg = (
+            f"📡 *Aladdin‑Style Signal for {ticker}*\n"
+            f"Action: {sig['action']}\n"
+            f"Confidence: {sig['confidence']}\n"
+            f"Score: {sig['score']}\n"
+            f"Regime: {sig['factors']['regime']}\n"
+            f"Stress Loss (COVID scenario): ${sig['stress_loss']}\n"
+            f"Technical crossover: {sig['technicals'].get('crossover_signal', 0)}"
+        )
+        await update.message.reply_text(msg, parse_mode="Markdown")
 
     async def run(self):
         await self.app.initialize()
